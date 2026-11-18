@@ -25,4 +25,4 @@ gradle build --no-daemon
 3. Запусти игру, нажми **F6** для настроек.
 
 ## Автор
-vany201847dody-art
+avirbeta
