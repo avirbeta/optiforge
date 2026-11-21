@@ -1,5 +1,6 @@
 package com.vizor.optiforge;
 
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 
 public class FpsMeter {
@@ -10,6 +11,11 @@ public class FpsMeter {
     private long windowStart = 0;
     private int windowFrames = 0;
     public int averageFps = 0;
+
+    public void register() {
+        // Считаем кадры, а не тики: HudRenderCallback вызывается на каждый кадр.
+        HudRenderCallback.EVENT.register((matrices, tickDelta) -> tick());
+    }
 
     public void tick() {
         long now = System.currentTimeMillis();
@@ -34,11 +40,13 @@ public class FpsMeter {
     }
 
     public int getCurrentFps() {
-        return currentFps;
+        if (currentFps > 0) return currentFps;
+        // Запасной вариант: берём FPS из отладочной строки Minecraft.
+        return readDebugFps();
     }
 
     public int getAverageFps() {
-        return averageFps;
+        return averageFps > 0 ? averageFps : getCurrentFps();
     }
 
     public static int readDebugFps() {

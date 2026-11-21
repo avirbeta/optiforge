@@ -9,21 +9,18 @@ public class HardwareDetector {
     public static int cpuCores;
     public static double cpuFreqMhz;
     public static long totalRamMb;
-    public static boolean isIntegratedGpu;
+    public static boolean isIntegratedGpu = true;
     public static String gpuName = "unknown";
     public static int tier = 2; // 0=поток,1=слабо,2=средне,3=хорошо,4=ультра
 
     public static void detect() {
         try {
-            Runtime rt = Runtime.getRuntime();
-            long maxBytes = rt.maxMemory();
-            totalRamMb = Math.max(1024, maxBytes / (1024L * 1024L));
+            totalRamMb = Math.max(1024, readTotalRamMb());
 
             cpuCores = ManagementFactory.getOperatingSystemMXBean().getAvailableProcessors();
             if (cpuCores < 1) cpuCores = 2;
 
             cpuFreqMhz = readCpuFrequency();
-
             isIntegratedGpu = isIntegratedGpu();
 
             computeTier();
@@ -36,6 +33,33 @@ public class HardwareDetector {
             tier = 2;
             detected = true;
         }
+    }
+
+    /**
+     * Определяет видеокарту из OpenGL. Вызывать после создания GL-контекста
+     * (например, из клиентского тика), иначе вернёт null.
+     */
+    public static void detectGpu() {
+        try {
+            String renderer = org.lwjgl.opengl.GL11.glGetString(org.lwjgl.opengl.GL11.GL_RENDERER);
+            if (renderer != null && !renderer.trim().isEmpty()) {
+                setGpuName(renderer.trim());
+            }
+        } catch (Throwable ignored) {
+        }
+    }
+
+    private static long readTotalRamMb() {
+        // Runtime.maxMemory() — это лимит heap JVM (часто 2 ГБ), а не вся ОЗУ.
+        try {
+            OperatingSystemMXBean bean = ManagementFactory.getOperatingSystemMXBean();
+            if (bean instanceof com.sun.management.OperatingSystemMXBean) {
+                long total = ((com.sun.management.OperatingSystemMXBean) bean).getTotalMemorySize();
+                if (total > 0) return total / (1024L * 1024L);
+            }
+        } catch (Throwable ignored) {
+        }
+        return Runtime.getRuntime().maxMemory() / (1024L * 1024L);
     }
 
     private static double readCpuFrequency() {
@@ -63,15 +87,20 @@ public class HardwareDetector {
             }
         } catch (Throwable ignored) {
         }
-        // Осень: оцениваем по количеству ядер как приближение
+        // Оценка по количеству ядер, если частоту прочитать не удалось
         return cpuCores <= 2 ? 2000 : cpuCores <= 4 ? 2500 : 3000;
     }
 
     private static boolean isIntegratedGpu() {
         String lower = gpuName == null ? "" : gpuName.toLowerCase();
-        return lower.contains("intel") || lower.contains("hd graphics")
-                || lower.contains("radeon") || lower.contains("vega") || lower.contains("iris")
-                || lower.contains("integrated") || lower.contains("amdz") || lower.contains("amdz");
+        if (lower.isEmpty() || lower.equals("unknown")) {
+            // Не знаем GPU — считаем встроенной, чтобы не завысить тир.
+            return true;
+        }
+        return lower.contains("intel") || lower.contains("hd graphics") || lower.contains("uhd graphics")
+                || lower.contains("iris") || lower.contains("radeon") || lower.contains("vega")
+                || lower.contains("integrated") || lower.contains("apple m")
+                || lower.contains("mali") || lower.contains("adreno");
     }
 
     public static void setGpuName(String name) {
@@ -112,6 +141,6 @@ public class HardwareDetector {
 
     public static String getSummary() {
         return "CPU: " + cpuCores + " яд., " + (int) cpuFreqMhz + " МГц | RAM: " + (int) totalRamMb + " МБ | GPU: "
-                + (isIntegratedGpu ? "встроенная" : "дискретная");
+                + (isIntegratedGpu ? "встроенная" : "дискретная") + " (" + gpuName + ")";
     }
 }

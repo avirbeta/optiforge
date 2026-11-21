@@ -31,7 +31,7 @@ public class OptiForgeMod implements ClientModInitializer {
         blockEntityOptimizer = new BlockEntityOptimizer();
         statsHud = new StatsHud();
         fpsMeter = new FpsMeter();
-
+        fpsMeter.register();
         entityOptimizer.register();
         particleOptimizer.register();
         itemOptimizer.register();

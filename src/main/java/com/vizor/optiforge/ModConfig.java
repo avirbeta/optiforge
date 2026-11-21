@@ -96,6 +96,7 @@ public class ModConfig {
             JsonObject obj = new JsonParser().parse(reader).getAsJsonObject();
             if (obj.has("entityCulling")) entityCulling = obj.get("entityCulling").getAsBoolean();
             if (obj.has("entityRenderDistance")) entityRenderDistance = obj.get("entityRenderDistance").getAsInt();
+            if (obj.has("entityTickDistance")) entityTickDistance = obj.get("entityTickDistance").getAsFloat();
             if (obj.has("skipEntityTicks")) skipEntityTicks = obj.get("skipEntityTicks").getAsBoolean();
             if (obj.has("optimizeMobs")) optimizeMobs = obj.get("optimizeMobs").getAsBoolean();
             if (obj.has("mobSpawnLimit")) mobSpawnLimit = obj.get("mobSpawnLimit").getAsInt();
@@ -139,9 +140,40 @@ public class ModConfig {
             if (obj.has("smoothLightingEnabled")) smoothLightingEnabled = obj.get("smoothLightingEnabled").getAsBoolean();
             if (obj.has("biomeBlend")) biomeBlend = obj.get("biomeBlend").getAsBoolean();
             if (obj.has("entityShadowDistance")) entityShadowDistance = obj.get("entityShadowDistance").getAsInt();
+            sanitize();
         } catch (Exception e) {
             LOGGER.error("Не удалось прочитать конфиг OptiForge", e);
+            sanitize();
         }
+    }
+
+    private static void sanitize() {
+        entityRenderDistance = clamp(entityRenderDistance, 2, 32);
+        entityTickDistance = clamp(entityTickDistance, 8f, 128f);
+        particleLimit = clamp(particleLimit, 0, 2000);
+        itemLimit = clamp(itemLimit, 0, 5000);
+        itemDespawnDistance = clamp(itemDespawnDistance, 8, 512);
+        blockEntityDistance = clamp(blockEntityDistance, 8, 512);
+        chunkLoadRadius = clamp(chunkLoadRadius, 1, 32);
+        renderDistanceOverride = clamp(renderDistanceOverride, 0, 32);
+        maxFov = clamp(maxFov, 30, 130);
+        targetFps = clamp(targetFps, 20, 480);
+        mobSpawnLimit = clamp(mobSpawnLimit, 0, 1000);
+        maxLivingEntities = clamp(maxLivingEntities, 0, 2000);
+        lowFpsParticleThreshold = clamp(lowFpsParticleThreshold, 5, 240);
+        entityShadowDistance = clamp(entityShadowDistance, 0, 128);
+
+        if (!"fast".equals(graphicsMode) && !"fancy".equals(graphicsMode) && !"auto".equals(graphicsMode)) {
+            graphicsMode = "fast";
+        }
+    }
+
+    private static int clamp(int value, int min, int max) {
+        return value < min ? min : (value > max ? max : value);
+    }
+
+    private static float clamp(float value, float min, float max) {
+        return value < min ? min : (value > max ? max : value);
     }
 
     public static void save() {
@@ -149,6 +181,7 @@ public class ModConfig {
             JsonObject obj = new JsonObject();
             obj.addProperty("entityCulling", entityCulling);
             obj.addProperty("entityRenderDistance", entityRenderDistance);
+            obj.addProperty("entityTickDistance", entityTickDistance);
             obj.addProperty("skipEntityTicks", skipEntityTicks);
             obj.addProperty("optimizeMobs", optimizeMobs);
             obj.addProperty("mobSpawnLimit", mobSpawnLimit);

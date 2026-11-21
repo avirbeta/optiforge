@@ -28,12 +28,13 @@ public class ParticleOptimizer {
 
         ClientTickEvents.START_CLIENT_TICK.register(client -> {
             spawnedThisTick = 0;
+            if (!ModConfig.optimizedParticles) return;
+
             tickCounter++;
-            if (tickCounter % 20 != 0 && ModConfig.optimizedParticles) return;
+            if (tickCounter % 20 != 0) return;
 
             totalParticles = countParticles();
 
-            if (!ModConfig.optimizedParticles) return;
             if (ModConfig.particleLimit <= 0) return;
 
             if (totalParticles > ModConfig.particleLimit) {

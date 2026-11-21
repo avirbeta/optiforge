@@ -14,6 +14,9 @@ public class AutoOptimizer {
     public static void register() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             tick++;
+            if (tick == 1) {
+                HardwareDetector.detectGpu();
+            }
 
             if (!autoDetectSet && tick > 40) {
                 autoDetectSet = true;
@@ -28,8 +31,6 @@ public class AutoOptimizer {
             if (!ModConfig.autoDetect) return;
 
             // Динамическое понижение, если всё равно лагает
-            if (!ModConfig.showWarnings) return;
-
             int fps = OptiForgeMod.fpsMeter != null ? OptiForgeMod.fpsMeter.getCurrentFps() : 0;
             int threshold = autoTierApplied == 0 ? 20 : autoTierApplied == 1 ? 25 : 30;
 
