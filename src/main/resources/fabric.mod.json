@@ -4,7 +4,9 @@
   "version": "${version}",
   "name": "OptiForge",
   "description": "Мод оптимизации Minecraft. Повышает FPS, убирает лаги от частиц и дропа.",
-  "authors": ["vizor"],
+  "authors": [
+    "vizor"
+  ],
   "contact": {},
   "license": "MIT",
   "environment": "client",
@@ -17,9 +19,9 @@
     "optiforge.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.11.0",
-    "minecraft": "~1.16.5",
-    "java": ">=8",
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.10",
+    "java": ">=21",
     "fabric": "*"
   }
 }

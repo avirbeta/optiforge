@@ -37,7 +37,7 @@ public class BlockEntityOptimizer {
             // Дорогая проверка "полностью окружён блоками" только вблизи игрока
             double nearSq = 32.0 * 32.0;
 
-            for (BlockEntity be : mc.world.blockEntities) {
+            for (BlockEntity be : mc.world.getBlockEntities()) {
                 if (be instanceof net.minecraft.block.entity.ChestBlockEntity) continue;
                 if (be instanceof net.minecraft.block.entity.SignBlockEntity) continue;
                 if (be instanceof net.minecraft.block.entity.BannerBlockEntity) continue;
@@ -71,7 +71,7 @@ public class BlockEntityOptimizer {
     }
 
     private boolean isSolid(MinecraftClient mc, BlockPos pos) {
-        return mc.world.getBlockState(pos).isOpaqueFullCube(mc.world, pos);
+        return mc.world.getBlockState(pos).isOpaqueFullCube();
     }
 
     public boolean isBlockEntityCulled(BlockEntity be) {

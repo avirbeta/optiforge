@@ -2,7 +2,7 @@ package com.vizor.optiforge;
 
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 
 public class StatsHud {
 
@@ -14,7 +14,7 @@ public class StatsHud {
     private int culledBlockEntities = 0;
 
     public void register() {
-        HudRenderCallback.EVENT.register((matrixStack, tickDelta) -> {
+        HudRenderCallback.EVENT.register((context, tickCounter) -> {
             if (!ModConfig.showFpsHud) return;
 
             updateStats();
@@ -22,30 +22,28 @@ public class StatsHud {
             int x = 5;
             int y = 5;
 
-            net.minecraft.client.gui.DrawableHelper.fill(matrixStack, x - 2, y - 2, x + 190, y + 74, 0x80000000);
+            context.fill(x - 2, y - 2, x + 190, y + 74, 0x80000000);
 
-            draw(matrixStack, "§6OptiForge", x, y, 0xFFFFFF);
+            draw(context, "§6OptiForge", x, y, 0xFFFFFF);
             y += 12;
 
             String fpsColor = fps >= 60 ? "§a" : fps >= 30 ? "§e" : "§c";
-            draw(matrixStack, fpsColor + "FPS: " + fps, x, y, 0xFFFFFF);
+            draw(context, fpsColor + "FPS: " + fps, x, y, 0xFFFFFF);
             y += 12;
 
-            draw(matrixStack, "§bСущности: " + entityCount + " §7(скрыто: " + culledEntities + ")", x, y, 0xFFFFFF);
+            draw(context, "§bСущности: " + entityCount + " §7(скрыто: " + culledEntities + ")", x, y, 0xFFFFFF);
             y += 12;
 
-            draw(matrixStack, "§dЧастицы: " + particleCount, x, y, 0xFFFFFF);
+            draw(context, "§dЧастицы: " + particleCount, x, y, 0xFFFFFF);
             y += 12;
 
-            draw(matrixStack, "§eБлок-энтити скрыто: " + culledBlockEntities, x, y, 0xFFFFFF);
+            draw(context, "§eБлок-энтити скрыто: " + culledBlockEntities, x, y, 0xFFFFFF);
             y += 12;
-            draw(matrixStack, "§7Профиль: " + HardwareDetector.getTierName() + " §8(" + PerfMode.tierName(HardwareDetector.tier) + ")", x, y, 0xFFFFFF);
+            draw(context, "§7Профиль: " + HardwareDetector.getTierName() + " §8(" + PerfMode.tierName(HardwareDetector.tier) + ")", x, y, 0xFFFFFF);
         });
     }
 
     private void updateStats() {
-        // НЕ итерируем по всем сущностям каждый кадр (это вызывало фризы) —
-        // берём кэшированные счётчики из оптимизаторов.
         if (OptiForgeMod.entityOptimizer != null && OptiForgeMod.entityOptimizer.isScanned()) {
             entityCount = OptiForgeMod.entityOptimizer.getLastLivingCount();
         }
@@ -57,18 +55,12 @@ public class StatsHud {
 
     private void parseFps() {
         try {
-            if (mc.fpsDebugString != null) {
-                String s = mc.fpsDebugString;
-                int space = s.indexOf(' ');
-                if (space > 0) {
-                    fps = Integer.parseInt(s.substring(0, space));
-                }
-            }
+            fps = mc.getCurrentFps();
         } catch (Exception ignored) {
         }
     }
 
-    private void draw(MatrixStack matrixStack, String text, int x, int y, int color) {
-        mc.textRenderer.drawWithShadow(matrixStack, text, x, y, color);
+    private void draw(DrawContext context, String text, int x, int y, int color) {
+        context.drawTextWithShadow(mc.textRenderer, text, x, y, color);
     }
 }

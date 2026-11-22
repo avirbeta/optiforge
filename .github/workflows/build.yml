@@ -2,7 +2,9 @@ name: Build
 
 on:
   push:
+    branches-ignore: ["modern/**"]
   pull_request:
+    branches-ignore: ["modern/**"]
 
 jobs:
   build:

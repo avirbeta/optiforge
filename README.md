@@ -1,3 +1,6 @@
+> **Ветка `modern/1.21.10`:** порт OptiForge под Minecraft **1.21.10** (Fabric, Java 21).
+> Версия для 1.16.5 осталась в ветке `main`.
+
 # OptiForge 1.1.0
 
 Оптимизатор FPS для **Minecraft 1.16.5** (Fabric). Автоматически определяет железо ПК и установленные моды и подстраивает настройки игры под них — повышает FPS и убирает лаги (частицы, дроп энтити, сканирование чанков) на слабых компьютерах.
@@ -23,13 +26,13 @@
 
 ## Сборка
 
-Требуется: JDK 17, Gradle 7.6+, Fabric Loom 0.12.56, yarn `1.16.5+build.10:v2`, fabric-api `0.42.0+1.16`.
+Требуется: JDK 21, Gradle 9.9+, Fabric Loom 1.11.8, yarn `1.21.10+build.3:v2`, fabric-api `0.138.4+1.21.10`.
 
 ```bash
 gradle build --no-daemon
 ```
 
-Готовый мод: `build/libs/optiforge-1.1.0.jar`.
+Готовый мод: `build/libs/optiforge-2.0.0-1.21.10.jar`.
 
 Сборка также запускается в GitHub Actions при каждом push — готовый jar лежит в артефактах workflow.
 

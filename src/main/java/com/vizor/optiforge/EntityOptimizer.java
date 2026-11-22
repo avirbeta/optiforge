@@ -38,8 +38,8 @@ public class EntityOptimizer {
             double maxDist = ModConfig.entityRenderDistance * 16.0;
             double maxDistSq = maxDist * maxDist;
 
-            Vec3d camPos = mc.player.getPos();
-            float yaw = mc.player.yaw;
+            Vec3d camPos = new Vec3d(mc.player.getX(), mc.player.getY(), mc.player.getZ());
+            float yaw = mc.player.getYaw();
             float fov = 70f;
             double yawRad = Math.toRadians(-yaw);
             double forwardX = -Math.sin(yawRad);
@@ -58,7 +58,7 @@ public class EntityOptimizer {
 
                 double distSq = dx * dx + dy * dy + dz * dz;
                 if (distSq > maxDistSq) {
-                    culledEntities.add(entity.getEntityId());
+                    culledEntities.add(entity.getId());
                     continue;
                 }
 
@@ -67,7 +67,7 @@ public class EntityOptimizer {
 
                 double dot = dx * forwardX + dz * forwardZ;
                 if (dot / lenXZ < cosThreshold) {
-                    culledEntities.add(entity.getEntityId());
+                    culledEntities.add(entity.getId());
                 }
             }
             lastLivingCount = livingCount;
@@ -85,7 +85,7 @@ public class EntityOptimizer {
 
     public boolean isEntityCulled(Entity entity) {
         if (!ModConfig.entityCulling) return false;
-        return culledEntities.contains(entity.getEntityId());
+        return culledEntities.contains(entity.getId());
     }
 
     public int getCulledCount() {

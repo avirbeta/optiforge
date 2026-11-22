@@ -2,14 +2,14 @@ package com.vizor.optiforge.mixin;
 
 import com.vizor.optiforge.OptiForgeMod;
 import net.minecraft.client.render.Frustum;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.entity.EntityRenderManager;
 import net.minecraft.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(EntityRenderDispatcher.class)
+@Mixin(EntityRenderManager.class)
 public class EntityCullingMixin {
 
     @Inject(method = "shouldRender", at = @At("HEAD"), cancellable = true)

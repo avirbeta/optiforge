@@ -50,17 +50,10 @@ public class FpsMeter {
     }
 
     public static int readDebugFps() {
-        MinecraftClient mc = MinecraftClient.getInstance();
         try {
-            if (mc.fpsDebugString != null && !mc.fpsDebugString.isEmpty()) {
-                String s = mc.fpsDebugString;
-                int sp = s.indexOf(' ');
-                if (sp > 0) {
-                    return Integer.parseInt(s.substring(0, sp));
-                }
-            }
+            return MinecraftClient.getInstance().getCurrentFps();
         } catch (Exception ignored) {
+            return 0;
         }
-        return 0;
     }
 }

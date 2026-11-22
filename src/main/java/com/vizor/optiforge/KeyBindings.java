@@ -5,7 +5,8 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 public class KeyBindings {
@@ -17,13 +18,13 @@ public class KeyBindings {
                 "Открыть настройки OptiForge",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_F6,
-                "OptiForge"
+                KeyBinding.Category.create(Identifier.of("optiforge", "main"))
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (openSettings.wasPressed()) {
                 if (MinecraftClient.getInstance().currentScreen == null) {
-                    MinecraftClient.getInstance().openScreen(new SettingsScreen());
+                    MinecraftClient.getInstance().setScreen(new SettingsScreen());
                 }
             }
         });

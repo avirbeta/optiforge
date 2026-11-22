@@ -41,7 +41,7 @@ public class ItemOptimizer {
 
                 count++;
                 if (count > limit) {
-                    culledItems.add(entity.getEntityId());
+                    culledItems.add(entity.getId());
                     continue;
                 }
 
@@ -50,7 +50,7 @@ public class ItemOptimizer {
                 double dz = entity.getZ() - camZ;
                 int despawn = ModConfig.itemDespawnDistance;
                 if (dx * dx + dy * dy + dz * dz > despawn * despawn) {
-                    culledItems.add(entity.getEntityId());
+                    culledItems.add(entity.getId());
                 }
             }
         });
@@ -58,7 +58,7 @@ public class ItemOptimizer {
 
     public boolean isItemCulled(ItemEntity item) {
         if (!ModConfig.optimizeItems) return false;
-        return culledItems.contains(item.getEntityId());
+        return culledItems.contains(item.getId());
     }
 
     public int getCulledCount() {
